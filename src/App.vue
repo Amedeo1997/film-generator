@@ -8,7 +8,10 @@
       <button @click="fetchRandomMovie">Generate Movie</button>
 
       <!-- Display the generated movie -->
-      <MovieCard v-if="movie" :movie="movie" />
+      <div v-if="movie" class="movie-card-container">
+        <MovieCard v-if="movie" :movie="movie" />
+      </div>
+
       <p v-if="error" class="error-message">No movie found! Try again.</p>
     </div>
   </div>
@@ -28,17 +31,42 @@ export default {
       movie: null, // Movie generated
       error: false, // Error state for API
       movieList: [
-        "tt0111161", // The Shawshank Redemption
-        "tt0068646", // The Godfather
-        "tt0071562", // The Godfather: Part II
-        "tt0468569", // The Dark Knight
-        "tt0050083", // 12 Angry Men
-        "tt0108052", // Schindler's List
-        "tt0137523", // Fight Club
-        "tt1375666", // Inception
-        "tt0080684", // Star Wars: Episode IV - A New Hope
-        "tt0133093", // The Matrix
-        // Add more IDs for other movies here
+        "The Shawshank Redemption",
+        "The Godfather",
+        "The Dark Knight",
+        "Schindler's List",
+        "12 Angry Men",
+        "Inception",
+        "Forrest Gump",
+        "The Matrix",
+        "The Lord of the Rings: The Return of the King",
+        "Pulp Fiction",
+        "Fight Club",
+        "The Silence of the Lambs",
+        "The Lion King",
+        "The Prestige",
+        "The Departed",
+        "Gladiator",
+        "The Green Mile",
+        "The Truman Show",
+        "The Sixth Sense",
+        "The Social Network",
+        "The Pursuit of Happyness",
+        "The Grand Budapest Hotel",
+        "The Intouchables",
+        "The Revenant",
+        "The Martian",
+        "The Wolf of Wall Street",
+        "The Big Short",
+        "The King's Speech",
+        "The Artist",
+        "The Shape of Water",
+        "The Favourite",
+        "The Irishman",
+        "The Gentlemen",
+        "The Batman",
+        "The Matrix Resurrections",
+        // Add more movie titles here
       ],
     };
   },
@@ -48,28 +76,59 @@ export default {
       const apiUrl = "https://www.omdbapi.com/";
 
       try {
-        // Select a random movie ID from the list
-        const randomMovieId = this.movieList[Math.floor(Math.random() * this.movieList.length)];
+        // Select a random movie title from the movieList
+        const randomMovieTitle = this.movieList[Math.floor(Math.random() * this.movieList.length)];
 
-        // Set parameters for API request
-        const params = {
-          i: randomMovieId, // Selected IMDb ID
-          apikey: apiKey,
-        };
+        // Get IMDb ID from movie title
+        const imdbId = await this.getMovieIdFromTitle(randomMovieTitle);
 
-        // Make API call
-        const response = await axios.get(apiUrl, { params });
+        if (imdbId) {
+          const params = {
+            apikey: apiKey,
+            i: imdbId, // IMDb ID of the movie
+          };
 
-        if (response.data.Response === "True") {
-          this.movie = response.data; // Set the found movie
-          this.error = false; // Reset error
+          // Make the API request using IMDb ID
+          const response = await axios.get(apiUrl, { params });
+
+          if (response.data.Response === "True") {
+            this.movie = response.data; // Set the movie data
+            this.error = false;
+          } else {
+            this.error = true;
+            this.movie = null;
+          }
         } else {
-          this.error = true; // Set error if no movie found
-          this.movie = null; // Remove movie if error
+          this.error = true;
+          this.movie = null;
         }
       } catch (error) {
         console.error("Error with API call", error);
         this.error = true;
+      }
+    },
+
+    // Helper function to get IMDb ID from movie title
+    async getMovieIdFromTitle(title) {
+      const apiKey = process.env.VUE_APP_API_KEY;
+      const apiUrl = "https://www.omdbapi.com/";
+
+      const params = {
+        apikey: apiKey,
+        t: title, // Title parameter
+      };
+
+      try {
+        const response = await axios.get(apiUrl, { params });
+        if (response.data.Response === "True") {
+          return response.data.imdbID; // Return IMDb ID if found
+        } else {
+          console.error("Movie not found for title:", title);
+          return null;
+        }
+      } catch (error) {
+        console.error("Error fetching movie ID", error);
+        return null;
       }
     },
   },
@@ -105,7 +164,7 @@ p {
 button {
   padding: 15px 25px;
   font-size: 1.2rem;
-  background-color: #007bff;
+  background-color: #97302c;
   color: white;
   border: none;
   border-radius: 8px;
@@ -115,7 +174,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #b33a36;
   transform: translateY(-4px); /* Small hover effect */
 }
 
@@ -128,18 +187,5 @@ button:disabled {
   color: red;
   font-size: 1.1rem;
   margin-top: 20px;
-}
-
-.movie-card {
-  animation: fadeIn 1s ease-in-out;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
 }
 </style>
