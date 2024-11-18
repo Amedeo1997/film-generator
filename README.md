@@ -1,24 +1,8 @@
-# film-generator
+# Movie Generator
 
-## Project setup
-```
-npm install
-```
+A simple web application that generates random movie recommendations using the **OMDb API** (Open Movie Database). The app allows users to discover new movies randomly with a beautiful UI and smooth transitions.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Features:
+- Randomly generate movie suggestions with just one click.
+- A movie card displaying title, year, and poster.
+- Uses **OMDb API** for fetching movie data.
